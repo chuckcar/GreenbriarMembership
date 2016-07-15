@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 public class BlockCaptainRenewalFormService {
 
 //    String pdfFileName = "/home/greenbriar/Dropbox/2015_gca_membership_drive.pdf";
-        String pdfFileName = "\\gbmTestData\\2015_gca_membership_drive.pdf";
+        String pdfFileName = "\\gcaRealData\\2015_gca_membership_drive.pdf";
 
     // (0,0)      lower left
     // (612, 792) upper right
@@ -79,9 +79,9 @@ public class BlockCaptainRenewalFormService {
                 int houseWidth = 115;
                 int nameWidth = 190;
                 int phoneWidth = 75;
-                int paidWidth = 30;
+                int paidWidth = 18;
                 int commentWidth = 45;
-                float[] widths = {houseWidth, nameWidth, phoneWidth, paidWidth, paidWidth, paidWidth, commentWidth};
+                float[] widths = {houseWidth, nameWidth, phoneWidth, paidWidth, paidWidth, paidWidth, paidWidth, commentWidth};
                 PDPageContentStream stream = new PDPageContentStream(document, page, true, true);
                 drawTable(page, stream, y, 10, widths, content);
                 stream.close();
@@ -102,20 +102,22 @@ public class BlockCaptainRenewalFormService {
         personCount++; // account for heading
         personCount++; // account for totals
 
-        String[][] content = new String[personCount][7];
+        String[][] content = new String[personCount][8];
         content[0][0] = "House";
         content[0][1] = "Person";
         content[0][2] = "Phone";
-        content[0][3] = "2013";
-        content[0][4] = "2014";
-        content[0][5] = "2015";
-        content[0][6] = "Comments";
+        content[0][3] = "13";
+        content[0][4] = "14";
+        content[0][5] = "15";
+        content[0][6] = "16";
+        content[0][7] = "Comments";
 
         int personIndex = 1;
 
         int count2013 = 0;
         int count2014 = 0;
         int count2015 = 0;
+        int count2016 = 0;
 
         for (House house : houses) {
             String housePlace = house.getHouseNumber() + " " + house.getStreetName();
@@ -135,17 +137,18 @@ public class BlockCaptainRenewalFormService {
                     content[personIndex][0] = "";
                 }
                 StringBuilder name = new StringBuilder(person.getLast());
-                if (person.getFirst() != null && false == person.getFirst().isEmpty()) {
+                if (person.getFirst() != null && false == person.getFirst().trim().isEmpty()) {
                     name.append(",").append(person.getFirst());
                 }
                 content[personIndex][1] = name.toString();
-                if (person.getEmail() != null && !person.getEmail().isEmpty()) {
-                    content[personIndex][1] += "_" + person.getEmail();
+                if (person.getEmail() != null && !person.getEmail().trim().isEmpty()) {
+                    content[personIndex][1] += "\\" + person.getEmail();  // character '\' not allowed in email address, so use this
                 }
                 content[personIndex][2] = person.getPhone();
                 content[personIndex][3] = "";
                 content[personIndex][4] = "";
                 content[personIndex][5] = "";
+                content[personIndex][6] = "";
                 if (firstPerson) {
                     if (house.memberInYear("2013")) {
                         content[personIndex][3] = "X";
@@ -159,9 +162,13 @@ public class BlockCaptainRenewalFormService {
                         content[personIndex][5] = "X";
                         count2015++;
                     }
+                    if (house.memberInYear("2016")) {
+                        content[personIndex][6] = "X";
+                        count2016++;
+                    }
                 }
-                //content[personIndex][5] = "";
-                content[personIndex][6] = person.getComment();
+
+                content[personIndex][7] = person.getComment();
                 firstPerson = false;
                 personIndex++;
             }
@@ -173,7 +180,8 @@ public class BlockCaptainRenewalFormService {
         content[personIndex][3] = String.format("%d", count2013);
         content[personIndex][4] = String.format("%d", count2014);
         content[personIndex][5] = String.format("%d", count2015);
-        content[personIndex][6] = "";
+        content[personIndex][6] = String.format("%d", count2016);
+        content[personIndex][7] = "";
 
         return content;
     }
@@ -385,9 +393,9 @@ public class BlockCaptainRenewalFormService {
                     if (i != 1) {
                         contentStream.drawString(cell);
                     } else {
-                        if (cell.contains("_")) {
+                        if (cell.contains("\\")) {  //character \
                             // handle email with person's name.
-                            String[] components = cell.split("_");
+                            String[] components = cell.split("\\\\");   //pass '\\' to regex, looking for '\'
                             String name = components[0];
                             String email = components[1];
                             contentStream.drawString(name);
