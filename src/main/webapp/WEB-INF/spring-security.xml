@@ -27,7 +27,7 @@
             <!--
             A users directory is used so that is can be supplied by a Docker volume.
             -->
-            <user-service id="userDetailsService" properties="file:///home/developer/NetBeansProjects/GreenbriarMembership/runtime/users.properties"/>
+            <user-service id="userDetailsService" properties="file:///Users/chuckcar00/Documents/CIOCODEHAUS/GreenbriarMembership/src/main/webapp/WEB-INF/users.properties"/>
         </authentication-provider>            
     </authentication-manager>
          
