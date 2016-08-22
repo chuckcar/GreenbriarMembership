@@ -10,7 +10,8 @@
         </a>
         <div><span class='<c:out value="${house.memberInYear2013Style()}"/>'>2013</span>
             <span class='<c:out value="${house.memberInYear2014Style()}"/>'>2014</span>
-            <span id="2015_<c:out value="${house.getId()}"/>" onclick="toggle2015Membership('<c:out value="${house.getId()}"/>'); return false;"  class='<c:out value="${house.memberInYear2015Style()}"/>'>2015</span>
+            <span class='<c:out value="${house.memberInYear2015Style()}"/>'>2015</span>
+            <span id="2016_<c:out value="${house.getId()}"/>" onclick="toggle2016Membership('<c:out value="${house.getId()}"/>'); return false;"  class='<c:out value="${house.memberInYear2016Style()}"/>'>2016</span>
         </div>
         <sec:authorize access="hasRole('ROLE_ADMIN')"><div style="font-size: 15px; height: 20px;"><a href="/house/add_person/<c:out value="${house.getId()}"/>">Add Person</a></div></sec:authorize>
     </td>

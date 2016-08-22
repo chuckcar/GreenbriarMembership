@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 public class BlockCaptainRenewalFormService {
 
 //    String pdfFileName = "/home/greenbriar/Dropbox/2015_gca_membership_drive.pdf";
-        String pdfFileName = "\\gcaRealData\\2015_gca_membership_drive.pdf";
+        String pdfFileName = "\\gcaRealData\\2016_gca_membership_drive.pdf";
 
     // (0,0)      lower left
     // (612, 792) upper right
@@ -76,12 +76,15 @@ public class BlockCaptainRenewalFormService {
                 float y = PDPage.PAGE_SIZE_LETTER.getUpperRightY() - 100;
                 String[][] content = generateBlockContent(document, page, block.getBlockName(), houses, x, y);
                 
-                int houseWidth = 115;
-                int nameWidth = 190;
-                int phoneWidth = 75;
-                int paidWidth = 18;
+                int houseWidth = 110;
+                int nameWidth = 175; //190
+                int phoneWidth = 58; //75
+                int dirWidth = 22;
+                int showWidth = 30;
+                int paidWidth = 18;  //30
+                int extraSticker = 36;
                 int commentWidth = 45;
-                float[] widths = {houseWidth, nameWidth, phoneWidth, paidWidth, paidWidth, paidWidth, paidWidth, commentWidth};
+                float[] widths = {houseWidth, nameWidth, phoneWidth, dirWidth, showWidth, paidWidth, paidWidth, extraSticker, commentWidth};
                 PDPageContentStream stream = new PDPageContentStream(document, page, true, true);
                 drawTable(page, stream, y, 10, widths, content);
                 stream.close();
@@ -102,20 +105,21 @@ public class BlockCaptainRenewalFormService {
         personCount++; // account for heading
         personCount++; // account for totals
 
-        String[][] content = new String[personCount][8];
-        content[0][0] = "House";
-        content[0][1] = "Person";
-        content[0][2] = "Phone";
-        content[0][3] = "13";
-        content[0][4] = "14";
-        content[0][5] = "15";
-        content[0][6] = "16";
-        content[0][7] = "Comments";
-
+        String[][] content = new String[personCount][9];
+        content[0][0] = "\\House";
+        content[0][1] = "\\Persons / email";
+        content[0][2] = "\\Phone";
+        content[0][3] = "In" + "\\Dir";
+        content[0][4] = "Show" + "\\phone";
+        content[0][5] = "Yr\\15";
+        content[0][6] = "Yr\\16";
+        content[0][7] = "# Extra\\Stickers";
+        content[0][8] = "\\Comments";
+        
         int personIndex = 1;
 
-        int count2013 = 0;
-        int count2014 = 0;
+        //int count2013 = 0;
+        //int count2014 = 0;
         int count2015 = 0;
         int count2016 = 0;
 
@@ -142,33 +146,50 @@ public class BlockCaptainRenewalFormService {
                 }
                 content[personIndex][1] = name.toString();
                 if (person.getEmail() != null && !person.getEmail().trim().isEmpty()) {
-                    content[personIndex][1] += "\\" + person.getEmail();  // character '\' not allowed in email address, so use this
+                    content[personIndex][1] += "\\   " + person.getEmail();  // character '\' not allowed in email address, so use this
                 }
                 content[personIndex][2] = person.getPhone();
                 content[personIndex][3] = "";
                 content[personIndex][4] = "";
                 content[personIndex][5] = "";
                 content[personIndex][6] = "";
+                content[personIndex][7] = "";
+                content[personIndex][8] = "";
+                //content[personIndex][9] = "";
+                if (person.isNoDirectory()) {
+                        content[personIndex][3] = "NO";
+                        content[personIndex][4] = "";
+                    }
+                if (person.inDirectory() && !person.getFirst().trim().isEmpty() && !person.getLast().trim().isEmpty()) {
+                    content[personIndex][3] = "yes";
+                    if (person.isUnlisted()) {
+                        content[personIndex][4] = "  NO";
+                    }
+                    else {
+                        content[personIndex][4] = "  yes";
+                    }
+                }
                 if (firstPerson) {
-                    if (house.memberInYear("2013")) {
-                        content[personIndex][3] = "X";
-                        count2013++;
-                    }
-                    if (house.memberInYear("2014")) {
-                        content[personIndex][4] = "X";
-                        count2014++;
-                    }
+                    //if (house.memberInYear("2013")) {
+                    //    content[personIndex][5] = " x";
+                    //    count2013++;
+                    //}
+                    //if (house.memberInYear("2014")) {
+                    //    content[personIndex][6] = " x";
+                    //    count2014++;
+                    //}
                     if (house.memberInYear("2015")) {
-                        content[personIndex][5] = "X";
+                        content[personIndex][5] = " x";
                         count2015++;
                     }
                     if (house.memberInYear("2016")) {
-                        content[personIndex][6] = "X";
+                        content[personIndex][6] = " x";
                         count2016++;
                     }
                 }
-
-                content[personIndex][7] = person.getComment();
+                
+                content[personIndex][7] = "";
+                content[personIndex][8] = person.getComment();
                 firstPerson = false;
                 personIndex++;
             }
@@ -177,11 +198,14 @@ public class BlockCaptainRenewalFormService {
         content[personIndex][0] = "Totals";
         content[personIndex][1] = "";
         content[personIndex][2] = "";
-        content[personIndex][3] = String.format("%d", count2013);
-        content[personIndex][4] = String.format("%d", count2014);
+        content[personIndex][3] = "";
+        content[personIndex][4] = "";
+        //content[personIndex][5] = String.format("%d", count2013);
+        //content[personIndex][6] = String.format("%d", count2014);
         content[personIndex][5] = String.format("%d", count2015);
         content[personIndex][6] = String.format("%d", count2016);
         content[personIndex][7] = "";
+        content[personIndex][8] = "";
 
         return content;
     }
@@ -263,7 +287,7 @@ public class BlockCaptainRenewalFormService {
     }
 
     private void drawSeparatorLine(final PDDocument document, final PDPage page) throws IOException {
-        float y = PDPage.PAGE_SIZE_LETTER.getUpperRightY() - 70;
+        float y = PDPage.PAGE_SIZE_LETTER.getUpperRightY() - 50; //70
         float pageWidth = PDPage.PAGE_SIZE_LETTER.getUpperRightX();
         float lineLength = (float) (pageWidth * .80);
         float leftOffset = (float) (pageWidth * .10);
@@ -352,12 +376,12 @@ public class BlockCaptainRenewalFormService {
         final int rowCount = content.length;
         int cols = widths.length;
 
-        final float headerHeight = 20f;
+        final float headerHeight = 30f; //20f
         final float rowHeight = 30f;
 
         final float tableWidth = page.findMediaBox().getWidth() - (2 * margin);
         final float tableHeight = (headerHeight * 2) + (rowHeight * (rowCount - 2));
-        final float cellMargin = 5f;
+        final float cellMargin = 4f; //5f
 
         contentStream.setNonStrokingColor(125, 125, 125);
         //draw the rows
@@ -385,21 +409,21 @@ public class BlockCaptainRenewalFormService {
                 if (cell != null) {
                     contentStream.beginText();
                     contentStream.moveTextPositionByAmount(textx, texty + 3);
-                    if (rowIndex == 0 || rowIndex == content.length - 1) {
+                    if (rowIndex == 0 || rowIndex == content.length - 1) {  //rowIndex == 0
                         contentStream.setFont(PDType1Font.HELVETICA_BOLD, tableFontSize);
                     } else {
                         contentStream.setFont(PDType1Font.HELVETICA, tableFontSize);
                     }
-                    if (i != 1) {
+                    if (i == 199) { //i != 1 (never)
                         contentStream.drawString(cell);
                     } else {
                         if (cell.contains("\\")) {  //character \
-                            // handle email with person's name.
+                            // handle email with person's name, 2 row data/labels
                             String[] components = cell.split("\\\\");   //pass '\\' to regex, looking for '\'
                             String name = components[0];
                             String email = components[1];
                             contentStream.drawString(name);
-                            contentStream.moveTextPositionByAmount(10, -10);
+                            contentStream.moveTextPositionByAmount(0, -10); //10, -10
                             contentStream.drawString(email);
                         } else {
                             contentStream.drawString(cell);

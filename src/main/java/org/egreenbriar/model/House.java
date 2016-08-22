@@ -15,6 +15,7 @@ public class House implements Comparable {
     private boolean member2013 = false;
     private boolean member2014 = false;
     private boolean member2015 = false;
+    private boolean member2016 = false;
     
     @Override
     public int hashCode() {
@@ -147,6 +148,9 @@ public class House implements Comparable {
         return member2015 ? "button green-border" : "button red-border";
     }
     
+    public String memberInYear2016Style() {
+        return member2016 ? "button green-border" : "button red-border";
+    }
     public boolean memberInYear(String year) {
         boolean rv = false;
         if (year != null) {
@@ -163,6 +167,9 @@ public class House implements Comparable {
                 case "2015":
                     rv = isMember2015();
                     break;
+                case "2016":
+                    rv = isMember2016();
+                    break;    
             }
         }
         return rv;
@@ -175,7 +182,11 @@ public class House implements Comparable {
     public void toggle2015Membership() {
         setMember2015(!isMember2015());
     }
-
+    
+    public void toggle2016Membership() {
+        setMember2016(!isMember2016());
+    }
+    
     /**
      * @return the member2012
      */
@@ -232,6 +243,20 @@ public class House implements Comparable {
         this.member2015 = member2015;
     }
 
+    /**
+     * @return the member2016
+     */
+    public boolean isMember2016() {
+        return member2016;
+    }
+
+    /**
+     * @param member2016 the member2016 to set
+     */
+    public void setMember2016(boolean member2016) {
+        this.member2016 = member2016;
+    }
+    
     /**
      * @return the districtName
      */

@@ -43,6 +43,12 @@ function toggle2015Membership( houseUuid ) {
    $("#2015_" + houseUuid).toggleClass('green-border');
   });
 }
+function toggle2016Membership( houseUuid ) {
+  $.get( "/house/toggle_2016_membership/" + houseUuid, function( data ) {
+   $("#2016_" + houseUuid).toggleClass('red-border');
+   $("#2016_" + houseUuid).toggleClass('green-border');
+  });
+}
 
 $.fn.editable.defaults.mode = 'inline';
 

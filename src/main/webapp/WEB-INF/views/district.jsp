@@ -58,12 +58,13 @@
                 <th rowspan="2" valign="top">Block</th>
                 <th rowspan="2" valign="top">Captain</th>
                 <th rowspan="2" valign="top">Houses</th>
-                <th colspan="3" valign="top">Membership</th>
+                <th colspan="4" valign="top">Membership</th>
             </tr>
             <tr>
                 <th>2013</th>
                 <th>2014</th>
                 <th>2015</th>
+                <th>2016</th>
             </tr>
             <c:forEach items="${blockService.getBlocks(districtName)}" var="block">
                 <tr>
@@ -77,6 +78,7 @@
                     <td align="right"><c:out value='${houseService.getPercentMembership(block.getBlockName(), "2013")}' />%</td>
                     <td align="right"><c:out value='${houseService.getPercentMembership(block.getBlockName(), "2014")}' />%</td>
                     <td align="right"><c:out value='${houseService.getPercentMembership(block.getBlockName(), "2015")}' />%</td>
+                    <td align="right"><c:out value='${houseService.getPercentMembership(block.getBlockName(), "2016")}' />%</td>
                 </tr>
             </c:forEach>
         </table>

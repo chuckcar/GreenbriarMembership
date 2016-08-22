@@ -144,13 +144,13 @@ public class HouseController {
         return "redirect:/block";
     }
 
-    @RequestMapping("/house/toggle_2015_membership/{houseUuid}")
+    @RequestMapping("/house/toggle_2016_membership/{houseUuid}")
     @ResponseBody
-    public void toggle2015Membership(Model model, @PathVariable String houseUuid) throws FileNotFoundException, IOException {
+    public void toggle2016Membership(Model model, @PathVariable String houseUuid) throws FileNotFoundException, IOException {
         House house = houseService.getHouse(houseUuid);
         String message = String.format("houseNumber(%s) streetName(%s) current(%b)", house.getHouseNumber(), house.getStreetName(), house.isMember2015());
-        changeService.logChange("toggle_2015_membership", message);
-        house.toggle2015Membership();
+        changeService.logChange("toggle_2016_membership", message);
+        house.toggle2016Membership();
         houseService.write();
     }
 
